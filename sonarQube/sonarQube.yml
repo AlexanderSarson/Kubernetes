@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-sonarqube-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 9000
+    targetPort: 9000
+  selector:
+    app: app-sonarqube
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-sonarqube-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-sonarqube
+  template:
+    metadata:
+      labels:
+        app: app-sonarqube
+    spec:
+      containers:
+      - name: sonarqube
+        image: sonarqube:8.0-community-beta
+        env:
+          - name: sonar.jdbc.username
+            value: sonar
+          - name: sonar.jdbc.password
+            value: sonar
+          - name: sonar.jdbc.url
+            value: jdbc:postgresql://postgres:5432/sonarqube
+        ports:
+        - containerPort: 9000

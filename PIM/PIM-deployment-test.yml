@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-pim-service-test
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 82
+    targetPort: 8080
+  selector:
+    app: app-pim-test
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-pim-deployment-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-pim-test
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: app-pim-test
+    spec:
+      containers:
+      - name: pim
+        image: alexandersarson/pim:192
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: 200m
+            memory: 300Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi

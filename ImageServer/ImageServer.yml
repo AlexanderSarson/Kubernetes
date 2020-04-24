@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-imageserver-service
+spec:
+  type: NodePort
+  ports:
+  - port: 81
+    targetPort: 8080
+  selector:
+    app: app-imageserver
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-imageserver-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-imageserver
+  template:
+    metadata:
+      labels:
+        app: app-imageserver
+    spec:
+      containers:
+      - name: imageserver
+        image: alexandersarson/imageserver:149
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: imageserver-persistent-storage
+          mountPath: /home/images
+      volumes:
+      - name: imageserver-persistent-storage
+        persistentVolumeClaim:
+          claimName: imageserver-pv-claim

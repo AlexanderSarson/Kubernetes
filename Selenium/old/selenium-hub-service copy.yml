@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-selenium-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 4444
+    targetPort: 4444
+  selector:
+    run: selenium-hub
